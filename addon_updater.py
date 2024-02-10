@@ -69,7 +69,7 @@ class SingletonUpdater:
         self._latest_release = None
         self._use_releases = False
         self._include_branches = False
-        self._include_branch_list = ['master']
+        self._include_branch_list = ['main']
         self._include_branch_auto_check = False
         self._manual_only = False
         self._version_min_update = None
@@ -281,7 +281,7 @@ class SingletonUpdater:
     def include_branch_list(self, value):
         try:
             if value is None:
-                self._include_branch_list = ['master']
+                self._include_branch_list = ['main']
             elif not isinstance(value, list) or len(value) == 0:
                 raise ValueError("include_branch_list should be a list of valid branches")
             else:
@@ -1244,7 +1244,7 @@ class SingletonUpdater:
         self._json["last_check"] = str(datetime.now())
         self.save_updater_json()
 
-        # Can be () or ('master') in addition to branches, and version tag.
+        # Can be () or ('main') in addition to branches, and version tag.
         new_version = self.version_tuple_from_text(self.tag_latest)
 
         if len(self._tags) == 0:
@@ -1270,7 +1270,7 @@ class SingletonUpdater:
             self._update_link = None
             return (False, None, None)
         elif str(new_version).lower() in self._include_branch_list:
-            # Handle situation where master/whichever branch is included
+            # Handle situation where main/whichever branch is included
             # however, this code effectively is not triggered now
             # as new_version will only be tag names, not branch names.
             if not self._include_branch_auto_check:

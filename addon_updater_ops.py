@@ -1437,11 +1437,11 @@ def register():
     # will ensure no old python files/caches remain in event different addon
     # versions have different filenames or structures.
 
-    # Allow branches like 'master' as an option to update to, regardless
+    # Allow branches like 'main' as an option to update to, regardless
     # of release or version.
     # Default behavior: releases will still be used for auto check (popup),
     # but the user has the option from user preferences to directly
-    # update to the master branch or any other branches specified using
+    # update to the main branch or any other branches specified using
     # the "install {branch}/older version" operator.
     updater.include_branches = True
 
@@ -1457,10 +1457,10 @@ def register():
     # skip_tag_function filtering above.
 
     # Populate if using "include_branches" option above.
-    # Note: updater.include_branch_list defaults to ['master'] branch if set to
+    # Note: updater.include_branch_list defaults to ['main'] branch if set to
     # none. Example targeting another multiple branches allowed to pull from:
-    # updater.include_branch_list = ['master', 'dev']
-    updater.include_branch_list = None  # None is the equivalent = ['master']
+    # updater.include_branch_list = ['main', 'dev']
+    updater.include_branch_list = None  # None is the equivalent = ['main']
 
     # Only allow manual install, thus prompting the user to open
     # the addon's web page to download, specifically: updater.website
