@@ -143,7 +143,7 @@ class AddonUpdaterInstallPopup(bpy.types.Operator):
         options={'HIDDEN'}
     )
 
-    ignore_enum = bpy.props.EnumProperty(
+    ignore_enum : bpy.props.EnumProperty(
         name="Process update",
         description="Decide to install, ignore, or defer new addon update",
         items=[
@@ -275,7 +275,7 @@ class AddonUpdaterUpdateNow(bpy.types.Operator):
     # If true, run clean install - ie remove all files before adding new
     # equivalent to deleting the addon and reinstalling, except the updater
     # folder/backup folder remains.
-    clean_install = bpy.props.BoolProperty(
+    clean_install : bpy.props.BoolProperty(
         name="Clean install",
         description=("If enabled, completely clear the addon's folder before "
                      "installing new update, creating a fresh install"),
@@ -345,7 +345,7 @@ class AddonUpdaterUpdateTarget(bpy.types.Operator):
             i += 1
         return ret
 
-    target = bpy.props.EnumProperty(
+    target: bpy.props.EnumProperty(
         name="Target version to install",
         description="Select the version to install",
         items=target_version
@@ -354,7 +354,7 @@ class AddonUpdaterUpdateTarget(bpy.types.Operator):
     # If true, run clean install - ie remove all files before adding new
     # equivalent to deleting the addon and reinstalling, except the
     # updater folder/backup folder remains.
-    clean_install = bpy.props.BoolProperty(
+    clean_install: bpy.props.BoolProperty(
         name="Clean install",
         description=("If enabled, completely clear the addon's folder before "
                      "installing new update, creating a fresh install"),
@@ -411,7 +411,7 @@ class AddonUpdaterInstallManually(bpy.types.Operator):
     bl_description = "Proceed to manually install update"
     bl_options = {'REGISTER', 'INTERNAL'}
 
-    error = bpy.props.StringProperty(
+    error : bpy.props.StringProperty(
         name="Error Occurred",
         default="",
         options={'HIDDEN'}
@@ -477,7 +477,7 @@ class AddonUpdaterUpdatedSuccessful(bpy.types.Operator):
     bl_description = "Update installation response"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
-    error = bpy.props.StringProperty(
+    error: bpy.props.StringProperty(
         name="Error Occurred",
         default="",
         options={'HIDDEN'}
@@ -1078,8 +1078,7 @@ def update_settings_ui(self, context, element=None):
         col = row.column(align=True)
         if updater.include_branches and len(updater.include_branch_list) > 0:
             branch = updater.include_branch_list[0]
-            col.operator(AddonUpdaterUpdateTarget.bl_idname,
-                         text="Install {} / old version".format(branch))
+            col.operator(AddonUpdaterUpdateTarget.bl_idname, text=f"Install {branch} / old version")
         else:
             col.operator(AddonUpdaterUpdateTarget.bl_idname,
                          text="(Re)install addon version")
@@ -1508,11 +1507,11 @@ def register():
     # The register line items for all operators/panels.
     # If using bpy.utils.register_module(__name__) to register elsewhere
     # in the addon, delete these lines (also from unregister).
-    for cls in classes:
-        # Apply annotations to remove Blender 2.8+ warnings, no effect on 2.7
-        make_annotations(cls)
-        # Comment out this line if using bpy.utils.register_module(__name__)
-        # bpy.utils.register_class(cls)
+    # for cls in classes:
+    # Apply annotations to remove Blender 2.8+ warnings, no effect on 2.7
+    # make_annotations(cls)
+    # Comment out this line if using bpy.utils.register_module(__name__)
+    # bpy.utils.register_class(cls)
 
     # Special situation: we just updated the addon, show a popup to tell the
     # user it worked. Could enclosed in try/catch in case other issues arise.
