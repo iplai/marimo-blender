@@ -4,7 +4,7 @@ bl_info = {
     "author": "iplai",
     "blender": (2, 8, 0),
     "category": "Node",
-    "version": (0, 0, 1),
+    "version": (0, 0, 2),
     "location": "View 3D > Header Menu > Notebook",
     "warning": "",
     "doc_url": "https://github.com/iplai/marimo-blender",
