@@ -78,23 +78,6 @@ updater.addon = "marimo"
 # -----------------------------------------------------------------------------
 # Blender version utils
 # -----------------------------------------------------------------------------
-def make_annotations(cls):
-    """Add annotation attribute to fields to avoid Blender 2.8+ warnings"""
-    if not hasattr(bpy.app, "version") or bpy.app.version < (2, 80):
-        return cls
-    if bpy.app.version < (2, 93, 0):
-        bl_props = {k: v for k, v in cls.__dict__.items() if isinstance(v, tuple)}
-    else:
-        bl_props = {k: v for k, v in cls.__dict__.items() if isinstance(v, bpy.props._PropertyDeferred)}
-    if bl_props:
-        if '__annotations__' not in cls.__dict__:
-            setattr(cls, '__annotations__', {})
-        annotations = cls.__dict__['__annotations__']
-        for k, v in bl_props.items():
-            annotations[k] = v
-            delattr(cls, k)
-    return cls
-
 
 def layout_split(layout, factor=0.0, align=False):
     """Intermediate method for pre and post blender 2.8 split UI function"""
@@ -143,7 +126,7 @@ class AddonUpdaterInstallPopup(bpy.types.Operator):
         options={'HIDDEN'}
     )
 
-    ignore_enum : bpy.props.EnumProperty(
+    ignore_enum: bpy.props.EnumProperty(
         name="Process update",
         description="Decide to install, ignore, or defer new addon update",
         items=[
@@ -275,7 +258,7 @@ class AddonUpdaterUpdateNow(bpy.types.Operator):
     # If true, run clean install - ie remove all files before adding new
     # equivalent to deleting the addon and reinstalling, except the updater
     # folder/backup folder remains.
-    clean_install : bpy.props.BoolProperty(
+    clean_install: bpy.props.BoolProperty(
         name="Clean install",
         description=("If enabled, completely clear the addon's folder before "
                      "installing new update, creating a fresh install"),
@@ -411,7 +394,7 @@ class AddonUpdaterInstallManually(bpy.types.Operator):
     bl_description = "Proceed to manually install update"
     bl_options = {'REGISTER', 'INTERNAL'}
 
-    error : bpy.props.StringProperty(
+    error: bpy.props.StringProperty(
         name="Error Occurred",
         default="",
         options={'HIDDEN'}
@@ -1383,7 +1366,7 @@ def register():
     # Needs to be within the same folder as the addon itself
     # Need to supply a full, absolute path to folder
     # updater.updater_path = # set path of updater folder, by default:
-    # 			/addons/{__package__}/{__package__}_updater
+    #         /addons/{__package__}/{__package__}_updater
 
     # Auto create a backup of the addon when installing other versions.
     updater.backup_current = True  # True by default
@@ -1504,26 +1487,12 @@ def register():
     # blender crashes).
     updater.auto_reload_post_update = False
 
-    # The register line items for all operators/panels.
-    # If using bpy.utils.register_module(__name__) to register elsewhere
-    # in the addon, delete these lines (also from unregister).
-    # for cls in classes:
-    # Apply annotations to remove Blender 2.8+ warnings, no effect on 2.7
-    # make_annotations(cls)
-    # Comment out this line if using bpy.utils.register_module(__name__)
-    # bpy.utils.register_class(cls)
-
     # Special situation: we just updated the addon, show a popup to tell the
     # user it worked. Could enclosed in try/catch in case other issues arise.
     show_reload_popup()
 
 
 def unregister():
-    for cls in reversed(classes):
-        # Comment out this line if using bpy.utils.unregister_module(__name__).
-        # bpy.utils.unregister_class(cls)
-        ...
-
     # Clear global vars since they may persist if not restarting blender.
     updater.clear_state()  # Clear internal vars, avoids reloading oddities.
 

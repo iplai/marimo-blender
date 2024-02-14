@@ -9,7 +9,7 @@ bl_info = {
     "warning": "",
     "doc_url": "https://github.com/iplai/marimo-blender",
     "tracker_url": "https://github.com/iplai/marimo-blender/issues",
-    "category": "System"
+    "category": "Development",
 }
 
 import importlib, inspect, types, typing, pkgutil, pathlib

@@ -466,7 +466,6 @@ class SingletonUpdater:
     def verbose(self, value):
         try:
             self._verbose = bool(value)
-            self.print_verbose("Verbose is enabled")
         except:
             raise ValueError("Verbose must be a boolean value")
 
@@ -832,7 +831,7 @@ class SingletonUpdater:
 
         # Save the date for future reference.
         now = datetime.now()
-        self._json["backup_date"] = "{m}-{d}-{yr}".format(m=now.strftime("%B"), d=now.day, yr=now.year)
+        self._json["backup_date"] = now.strftime("%Y-%m-%d")
         self.save_updater_json()
 
     def restore_backup(self):
@@ -1465,7 +1464,6 @@ class SingletonUpdater:
         if os.path.isfile(jpath):
             with open(jpath) as data_file:
                 self._json = json.load(data_file)
-                self.print_verbose("Read in JSON settings from file")
         else:
             self._json = {
                 "last_check": "",
