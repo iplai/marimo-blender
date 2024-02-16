@@ -29,3 +29,7 @@ Please note that the button will only appear if the addon is installed and enabl
 If you have any further questions or issues, feel free to ask!
 
 **Note:** Feel free to write `import bpy` in the notebook cell.
+
+## Showcase
+
+![](images/动画.gif)
