@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - "!*"
+    tags:
+      - "v*"
+
+name: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Copy LICENSE file
+        run: cp -p LICENSE marimo/
+
+      - name: Create a zip
+        run: zip -r -9 blender_notebook-${GITHUB_REF_NAME}.zip marimo/
+
+      - name: Create a Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          files: |
+            blender_notebook-${{ github.ref_name }}.zip
+          draft: false
+          generate_release_notes: true
+          prerelease: false
