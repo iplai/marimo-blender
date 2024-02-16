@@ -23,7 +23,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          name: Release ${{ github.ref_name }}
+          name: Blender Notebook ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           files: |
             blender_notebook-${{ github.ref_name }}.zip
