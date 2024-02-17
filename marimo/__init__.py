@@ -97,7 +97,7 @@ bl_info = {
     "author": "iplai",
     "description": "Reactive notebook for Python integrated in blender",
     "blender": (2, 80, 0),
-    "version": (0, 1, 0),
+    "version": (0, 0, 4),
     "location": "View 3D > Header Menu > Notebook",
     "doc_url": "https://github.com/iplai/marimo-blender",
     "tracker_url": "https://github.com/iplai/marimo-blender/issues",
@@ -142,4 +142,4 @@ def unregister():
         bpy.utils.unregister_class(cls)
     bpy.types.VIEW3D_HT_header.remove(marimo_header_btn)
     from .addon_setup import server
-    # server.stop()
+    server.stop()
