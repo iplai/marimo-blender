@@ -116,7 +116,7 @@ class Installer(Executor):
         # For maintainable cli
         "click>=8.0,<9",
         # For python 3.8 compatibility
-        "importlib_resources>=5.10.2; python_version < \"3.9\"",
+        # "importlib_resources>=5.10.2; python_version < \"3.9\"",
         # code completion
         "jedi>=0.18.0",
         # compile markdown to html
@@ -137,17 +137,25 @@ class Installer(Executor):
         # websockets for use with starlette
         "websockets >= 10.0.0,<13.0.0",
         # python <=3.10 compatibility
-        "typing_extensions>=4.4.0; python_version < \"3.10\"",
+        # "typing_extensions>=4.4.0; python_version < \"3.10\"",
         # for rst parsing
         "docutils>=0.17.0",
         # for cell formatting; if user version is not compatible, no-op
         # so no lower bound needed
         "black",
         "fake-bpy-module",
+        "marimo",
     ]
+
+    if sys.version_info < (3, 9):
+        dependencies.append("importlib_resources>=5.10.2")
+
+    if sys.version_info < (3, 10):
+        dependencies.append("typing_extensions>=4.4.0")
 
     def __init__(self):
         super().__init__()
+        self.installed = False
 
     def get_required_modules(self) -> dict[str, bool]:
         modules = {d.split(">=")[0].strip(): False for d in self.dependencies}
@@ -156,12 +164,28 @@ class Installer(Executor):
                 modules[m.name] = True
             elif m.name == "pymdownx":
                 modules["pymdown-extensions"] = True
-
+        modules['fake-bpy-module'] = self.installed
         return modules
 
     def install_python_modules(self, line_callback=None, finally_callback=None):
 
         site_packages_path = next((p for p in sys.path if p.endswith('site-packages')), None)
+
+        def replace_marimo_module():
+            import os, shutil
+            marimo_module_path = os.path.join(os.path.dirname(__file__), 'marimo')
+            destination_path = os.path.join(site_packages_path, 'marimo')
+            try:
+                print(f"Replacing official marimo module with blender version to {site_packages_path}")
+                if os.path.exists(destination_path):
+                    shutil.rmtree(destination_path)
+                shutil.copytree(marimo_module_path, destination_path)
+                self.installed = True
+                print("Done")
+            except Exception as e:
+                print(f"Failed to copy marimo module to {site_packages_path}")
+                print(e)
+
         target_option = ['--target', site_packages_path] if site_packages_path else []
 
         self.exec_command(
@@ -173,8 +197,13 @@ class Installer(Executor):
                 '--disable-pip-version-check',
                 '--no-input',
                 '--exists-action', 'i',
-                *[name for name, installed in self.get_required_modules().items() if not installed],
-                line_callback=line_callback, finally_callback=finally_callback
+                '--upgrade',
+                'marimo',
+                'fake-bpy-module',
+                line_callback=line_callback,
+                finally_callback=lambda e: e.exec_function(
+                    replace_marimo_module, line_callback=line_callback, finally_callback=finally_callback
+                )
             )
         )
 
@@ -218,8 +247,6 @@ class Server(Executor):
         thread.start()
 
     def start(self, port, line_callback=None, finally_callback=None):
-        import importlib
-        importlib.reload(sys.modules['marimo'])
 
         def server_thread_function(port: int):
             from marimo._server.start import start
