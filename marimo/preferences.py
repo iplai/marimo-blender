@@ -137,7 +137,7 @@ class MarimoAddonPreferences(bpy.types.AddonPreferences):
         flow = col.grid_flow(align=True)
         flow.row().label(text="Required Python Modules:")
         for name, is_installed in addon_setup.installer.get_required_modules().items():
-            flow.row().label(text=name, icon='CHECKMARK' if is_installed else 'ERROR')
+            flow.row().label(text=name, icon='CHECKMARK' if is_installed else 'QUESTION' if name == 'fake-bpy-module' else 'ERROR')
         flow = col.grid_flow(align=True)
         row = flow.row(align=True)
         row.operator(InstallPythonModules.bl_idname)

@@ -142,7 +142,8 @@ class Installer(Executor):
         "docutils>=0.17.0",
         # for cell formatting; if user version is not compatible, no-op
         # so no lower bound needed
-        "black"
+        "black",
+        "fake-bpy-module",
     ]
 
     def __init__(self):
@@ -155,6 +156,7 @@ class Installer(Executor):
                 modules[m.name] = True
             elif m.name == "pymdownx":
                 modules["pymdown-extensions"] = True
+
         return modules
 
     def install_python_modules(self, line_callback=None, finally_callback=None):
@@ -216,6 +218,9 @@ class Server(Executor):
         thread.start()
 
     def start(self, port, line_callback=None, finally_callback=None):
+        import importlib
+        importlib.reload(sys.modules['marimo'])
+
         def server_thread_function(port: int):
             from marimo._server.start import start
             from marimo._server.utils import find_free_port
@@ -231,10 +236,7 @@ class Server(Executor):
                 include_code=True,
                 watch=False,
             )
-        # self.exec_function(server_thread_function, port, line_callback=line_callback, finally_callback=finally_callback)
-        thread = threading.Thread(target=server_thread_function, args=(port,))
-        thread.daemon = True
-        thread.start()
+        self.exec_function(server_thread_function, port, line_callback=line_callback, finally_callback=finally_callback)
 
     def stop(self):
         raise NotImplementedError()
