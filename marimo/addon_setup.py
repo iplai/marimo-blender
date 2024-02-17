@@ -231,7 +231,10 @@ class Server(Executor):
                 include_code=True,
                 watch=False,
             )
-        self.exec_function(server_thread_function, port, line_callback=line_callback, finally_callback=finally_callback)
+        # self.exec_function(server_thread_function, port, line_callback=line_callback, finally_callback=finally_callback)
+        thread = threading.Thread(target=server_thread_function, args=(port,))
+        thread.daemon = True
+        thread.start()
 
     def stop(self):
         raise NotImplementedError()
