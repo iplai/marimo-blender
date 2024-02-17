@@ -87,7 +87,7 @@ try:
     from marimo._runtime.runtime import defs, refs
     from marimo._runtime.state import state
 except (ModuleNotFoundError, ImportError):
-    pass
+    print("marimo dependencies not installed. Please click the 'Install Python Modules' button in the Marimo addon preferences.")
 # -----------------------------------------------------------------------------
 # Make marimo work as a blender addon
 # -----------------------------------------------------------------------------
