@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Copy LICENSE file
-        run: cp -p LICENSE marimo/
+        run: cp -p LICENSE marimo_blender/
 
       - name: Create a zip
-        run: zip -r -9 blender_notebook-${GITHUB_REF_NAME}.zip marimo/
+        run: zip -r -9 blender_notebook-${GITHUB_REF_NAME}.zip marimo_blender/
 
       - name: Create a Release
         id: create_release
