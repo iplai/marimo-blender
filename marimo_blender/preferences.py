@@ -33,6 +33,29 @@ class InstallPythonModules(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class InstallPythonModule(bpy.types.Operator):
+    """Install Python Module """
+    bl_idname = 'marimo.install_python_module'
+    bl_label = 'Install Python Module'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    module_name: bpy.props.StringProperty(name="Module Name", default="")
+
+    @classmethod
+    def poll(cls, context):
+        return not addon_setup.installer.is_running
+
+    def execute(self, context):
+        _LINES.clear()
+        region = context.region
+        addon_setup.installer.install_python_module(
+            self.module_name,
+            line_callback=lambda line: _lines_append(line) or region.tag_redraw(),
+            finally_callback=lambda e: region.tag_redraw(),
+        )
+        return {'FINISHED'}
+
+
 class UninstallPythonModules(bpy.types.Operator):
     """Uninstall Python Module marimo dependencies"""
     bl_idname = 'marimo.uninstall_python_modules'
@@ -120,10 +143,11 @@ class MarimoAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     port: bpy.props.IntProperty(
-        name="Port of Marimo Server",
+        name="Server Port",
         default=2718,
     )
     show_logs: bpy.props.BoolProperty(default=False)
+    module_name: bpy.props.StringProperty(name="Module Name", default="")
 
     def draw(self, context: bpy.types.Context):
         layout = self.layout
@@ -133,16 +157,26 @@ class MarimoAddonPreferences(bpy.types.AddonPreferences):
         row.operator(StartMarimoServer.bl_idname, icon='URL')
         # row.operator(StopMarimoServer.bl_idname, icon='X')
 
-        col = layout.column(align=True)
-        flow = col.grid_flow(align=True)
-        flow.row().label(text="Required Python Modules:")
+        row = layout.row()
+        row.label(text="Required Python Modules:")
+        row.operator(InstallPythonModules.bl_idname, icon="PREFERENCES")
+
+        row = layout.row(align=True)
+        flow = row.grid_flow(align=True)
+
         for name, is_installed in addon_setup.installer.get_required_modules().items():
-            flow.row().label(text=name, icon='CHECKMARK' if is_installed else 'QUESTION' if name == 'fake-bpy-module' else 'ERROR')
-        flow = col.grid_flow(align=True)
+            flow.row().label(text=name, icon='CHECKMARK' if is_installed else 'REC' if name == 'fake-bpy-module' else 'ERROR')
+
+        row = layout.row()
+        row.operator(UninstallPythonModules.bl_idname)
+        row.operator(ListPythonModules.bl_idname)
+
+        row = layout.row()
+        flow = row.grid_flow(align=True)
         row = flow.row(align=True)
-        row.operator(InstallPythonModules.bl_idname)
-        flow.row().operator(UninstallPythonModules.bl_idname)
-        flow.row().operator(ListPythonModules.bl_idname)
+        row.prop(self, 'module_name')
+        row = flow.row(align=True)
+        row.operator(InstallPythonModule.bl_idname, icon='PLUS').module_name = self.module_name
 
         col = layout.column(align=False)
         row = col.row(align=True)

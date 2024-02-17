@@ -207,6 +207,16 @@ class Installer(Executor):
             )
         )
 
+    def install_python_module(self, module_name, line_callback=None, finally_callback=None):
+        self.exec_command(
+            sys.executable, '-m', 'pip', 'install',
+            '--disable-pip-version-check',
+            '--no-input',
+            '--exists-action', 'i',
+            module_name,
+            line_callback=line_callback,
+            finally_callback=finally_callback)
+
     def uninstall_python_modules(self, line_callback=None, finally_callback=None):
         self.exec_command(
             sys.executable, '-m', 'pip', 'uninstall',
