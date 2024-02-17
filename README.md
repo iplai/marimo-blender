@@ -14,7 +14,7 @@ To install the addon, follow these steps:
 2. Open Blender and go to the Preferences addon tab.
 3. Click on the "Install" button and select the downloaded zip file.
 4. Enable the "Blender Notebook" addon.
-5. For the first time, in the addon preferences, click the "Install Dependencies" button. Blender will install the necessary Python modules, which may take 1-2 minutes depending on your network speed. 
+5. For the first time, in the addon preferences, click the "Install Python Modules" button. Blender will install the necessary Python modules, which may take 1-2 minutes depending on your network speed. 
 
 ## Usage
 
