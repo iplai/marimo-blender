@@ -3,6 +3,7 @@ import io
 import logging
 import pkgutil
 import subprocess
+import os
 import sys
 import threading
 import traceback
@@ -171,20 +172,28 @@ class Installer(Executor):
 
         site_packages_path = next((p for p in sys.path if p.endswith('site-packages')), None)
 
-        def replace_marimo_module():
-            import os, shutil
-            marimo_module_path = os.path.join(os.path.dirname(__file__), 'marimo')
-            destination_path = os.path.join(site_packages_path, 'marimo')
+        def is_junction(path: str) -> bool:
             try:
-                print(f"Replacing official marimo module with blender version to {site_packages_path}")
-                if os.path.exists(destination_path):
-                    shutil.rmtree(destination_path)
-                shutil.copytree(marimo_module_path, destination_path)
-                self.installed = True
-                print("Done")
-            except Exception as e:
-                print(f"Failed to copy marimo module to {site_packages_path}")
-                print(e)
+                return bool(os.readlink(path))
+            except OSError:
+                return False
+
+        def replace_marimo_module():
+            addon_path_marimo = os.path.join(os.path.dirname(__file__), 'marimo')
+            site_package_marimo = os.path.join(site_packages_path, 'marimo')
+            if os.path.exists(site_package_marimo):
+                if is_junction(site_package_marimo) or os.path.islink(site_package_marimo):
+                    os.unlink(site_package_marimo)
+                elif os.path.isdir(site_package_marimo):
+                    import shutil
+                    shutil.rmtree(site_package_marimo)
+            if sys.platform == 'win32':
+                import _winapi
+                _winapi.CreateJunction(addon_path_marimo, site_package_marimo)
+            else:
+                os.symlink(addon_path_marimo, site_package_marimo)
+            print(f'Create symlink: {site_package_marimo} -> {addon_path_marimo}')
+            self.installed = True
 
         target_option = ['--target', site_packages_path] if site_packages_path else []
 
@@ -198,8 +207,7 @@ class Installer(Executor):
                 '--no-input',
                 '--exists-action', 'i',
                 '--upgrade',
-                'marimo',
-                'fake-bpy-module',
+                *[name for name, installed in self.get_required_modules().items() if not installed and name != 'marimo'],
                 line_callback=line_callback,
                 finally_callback=lambda e: e.exec_function(
                     replace_marimo_module, line_callback=line_callback, finally_callback=finally_callback
@@ -221,9 +229,10 @@ class Installer(Executor):
         self.exec_command(
             sys.executable, '-m', 'pip', 'uninstall',
             '--yes',
-            *[name for name, installed in self.get_required_modules().items() if installed],
+            *[name for name, installed in self.get_required_modules().items() if installed and name != 'marimo'],
             line_callback=line_callback, finally_callback=finally_callback
         )
+        self.installed = False
 
     def list_python_modules(self, line_callback=None, finally_callback=None):
         self.exec_command(

@@ -158,8 +158,9 @@ class MarimoAddonPreferences(bpy.types.AddonPreferences):
         # row.operator(StopMarimoServer.bl_idname, icon='X')
 
         row = layout.row()
-        row.label(text="Required Python Modules:")
         row.operator(InstallPythonModules.bl_idname, icon="PREFERENCES")
+        row = layout.row()
+        row.label(text="Required Python Modules:")
 
         row = layout.row(align=True)
         flow = row.grid_flow(align=True)
