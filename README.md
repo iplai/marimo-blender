@@ -36,5 +36,6 @@ If you have any further questions or issues, feel free to ask!
 
 ## Changelog
 
-v0.1.1: support autocomplete for bpy module (including mathutils etc.)
+- v0.1.1: Support autocomplete for bpy module (including mathutils etc.)
+
 ![](images/autocomplete.png)

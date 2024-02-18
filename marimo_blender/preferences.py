@@ -174,9 +174,9 @@ class MarimoAddonPreferences(bpy.types.AddonPreferences):
         row = layout.row()
         flow = row.grid_flow(align=True)
         row = flow.row(align=True)
-        row.prop(self, 'module_name')
+        row.operator(InstallPythonModule.bl_idname, icon='PLUS', text='pip install').module_name = self.module_name
         row = flow.row(align=True)
-        row.operator(InstallPythonModule.bl_idname, icon='PLUS').module_name = self.module_name
+        row.prop(self, 'module_name', text='')
 
         col = layout.column(align=False)
         row = col.row(align=True)
