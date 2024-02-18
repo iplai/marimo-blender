@@ -3,7 +3,7 @@ bl_info = {
     "author": "iplai",
     "description": "Reactive notebook for Python integrated in blender",
     "blender": (2, 80, 0),
-    "version": (0, 2, 1),
+    "version": (0, 2, 2),
     "location": "View 3D > Header Menu > Notebook",
     "doc_url": "https://github.com/iplai/marimo-blender",
     "tracker_url": "https://github.com/iplai/marimo-blender/issues",
