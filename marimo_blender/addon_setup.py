@@ -265,9 +265,9 @@ class Server(Executor):
         thread.daemon = True
         thread.start()
 
-    def start(self, port, line_callback=None, finally_callback=None):
+    def start(self, port, filename, line_callback=None, finally_callback=None):
 
-        def server_thread_function(port: int):
+        def server_thread_function(port: int, filename):
             from marimo._server.start import start
             from marimo._server.utils import find_free_port
             self._port = find_free_port(port)
@@ -277,12 +277,12 @@ class Server(Executor):
                 host="",
                 port=self._port,
                 headless=False,
-                filename=None,
+                filename=filename,
                 mode='edit',
                 include_code=True,
                 watch=False,
             )
-        self.exec_function(server_thread_function, port, line_callback=line_callback, finally_callback=finally_callback)
+        self.exec_function(server_thread_function, port, filename, line_callback=line_callback, finally_callback=finally_callback)
 
     def stop(self):
         raise NotImplementedError()

@@ -112,9 +112,11 @@ class StartMarimoServer(bpy.types.Operator):
             show_message_box("Marimo Server is starting ...", "Marimo Server", "INFO")
             _LINES.clear()
             region = context.region
-            port = bpy.context.preferences.addons[__package__].preferences.port
+            prefs = bpy.context.preferences.addons[__package__].preferences
+            port, filename = prefs.port, prefs.filename
             addon_setup.server.start(
                 port,
+                filename,
                 line_callback=lambda line: _lines_append(line) or region.tag_redraw(),
                 finally_callback=lambda e: region.tag_redraw()
             )
@@ -143,22 +145,26 @@ class MarimoAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     port: bpy.props.IntProperty(
-        name="Server Port",
+        name="Port",
         default=2718,
     )
+    filename: bpy.props.StringProperty(name="Notebook File Path", description="Leave empty to edit a new file", default="", subtype='FILE_PATH')
     show_logs: bpy.props.BoolProperty(default=False)
     module_name: bpy.props.StringProperty(name="Module Name", default="")
 
     def draw(self, context: bpy.types.Context):
         layout = self.layout
 
-        row = layout.row()
-        row.prop(self, 'port')
-        row.operator(StartMarimoServer.bl_idname, icon='URL')
-        # row.operator(StopMarimoServer.bl_idname, icon='X')
+        row = layout.row(align=True)
+        split = row.split(factor=0.33)
+        split.prop(self, 'port')
+        split.prop(self, 'filename', text="", icon='FILE_SCRIPT')
 
         row = layout.row()
+        row.operator(StartMarimoServer.bl_idname, icon='URL')
         row.operator(InstallPythonModules.bl_idname, icon="PREFERENCES")
+        # row.operator(StopMarimoServer.bl_idname, icon='X')
+
         row = layout.row()
         row.label(text="Required Python Modules:")
 
