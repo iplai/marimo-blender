@@ -267,7 +267,7 @@ class Server(Executor):
 
     def start(self, port, filename, line_callback=None, finally_callback=None):
 
-        def server_thread_function(port: int, filename):
+        def server_thread_function(port: int, filename: str):
             from marimo._server.start import start
             from marimo._server.utils import find_free_port
             self._port = find_free_port(port)
@@ -277,7 +277,7 @@ class Server(Executor):
                 host="",
                 port=self._port,
                 headless=False,
-                filename=filename,
+                filename=filename or None,
                 mode='edit',
                 include_code=True,
                 watch=False,
