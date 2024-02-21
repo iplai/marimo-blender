@@ -1,4 +1,4 @@
-import threading
+import os
 import bpy
 
 from . import addon_setup
@@ -114,6 +114,8 @@ class StartMarimoServer(bpy.types.Operator):
             region = context.region
             prefs = bpy.context.preferences.addons[__package__].preferences
             port, filename = prefs.port, prefs.filename
+            if filename and os.path.dirname(filename) == os.getcwd():
+                filename = os.path.basename(filename)
             addon_setup.server.start(
                 port,
                 filename,

@@ -3,7 +3,7 @@ bl_info = {
     "author": "iplai",
     "description": "Reactive notebook for Python integrated in blender",
     "blender": (2, 80, 0),
-    "version": (0, 2, 6),
+    "version": (0, 2, 7),
     "location": "View 3D > Header Menu > Notebook",
     "doc_url": "https://github.com/iplai/marimo-blender",
     "tracker_url": "https://github.com/iplai/marimo-blender/issues",
@@ -30,7 +30,6 @@ def marimo_header_btn(self: bpy.types.Menu, context):
 
 class MARIMO_PT_main_panel(bpy.types.Panel):
     bl_label = "Notebook"
-    bl_idname = "Marimo_PT_main_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'Marimo'
